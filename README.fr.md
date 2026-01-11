@@ -1,21 +1,19 @@
 # Hybrid Movie Search - Symfony AI + PostgreSQL
 
-> [🇫🇷 Version française](README.fr.md)
+Application de recherche hybride utilisant **Symfony AI HybridStore** avec l'algorithme **RRF (Reciprocal Rank Fusion)** combinant recherche sémantique (pgvector), recherche plein-texte (PostgreSQL ts_rank) et matching flou (pg_trgm).
 
-Hybrid search application using **Symfony AI HybridStore** with **RRF (Reciprocal Rank Fusion)** algorithm combining semantic search (pgvector), full-text search (PostgreSQL ts_rank), and fuzzy matching (pg_trgm).
+## Fonctionnalités
 
-## Features
+- **Symfony AI HybridStore** - Implémentation officielle de la recherche hybride
+- **RRF (Reciprocal Rank Fusion)** - Algorithme de fusion des résultats de recherche
+- **Recherche Sémantique** - Embeddings vectoriels via Ollama (pgvector)
+- **Recherche Plein-texte** - PostgreSQL Full-Text Search (ts_rank)
+- **Fuzzy Matching** - Recherche floue avec pg_trgm (configurable)
+- **31,944 films** - Dataset TMDb avec titres, descriptions, genres et posters
+- **Interface Web** - Interface de recherche moderne et réactive
+- **Docker Compose** - Stack complète containerisée avec Ollama optimisé
 
-- **Symfony AI HybridStore** - Official hybrid search implementation
-- **RRF (Reciprocal Rank Fusion)** - Search results fusion algorithm
-- **Semantic Search** - Vector embeddings via Ollama (pgvector)
-- **Full-text Search** - PostgreSQL Full-Text Search (ts_rank)
-- **Fuzzy Matching** - Fuzzy search with pg_trgm (configurable)
-- **31,944 movies** - TMDb dataset with titles, descriptions, genres, and posters
-- **Web Interface** - Modern and responsive search interface
-- **Docker Compose** - Complete containerized stack with optimized Ollama
-
-## Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -51,92 +49,92 @@ Hybrid search application using **Symfony AI HybridStore** with **RRF (Reciproca
 
 ## Quick Start
 
-### Prerequisites
-- Docker and Docker Compose
-- 8GB RAM minimum (16GB recommended for optimal performance)
-- 4 CPU cores minimum (8 cores recommended)
+### Prérequis
+- Docker et Docker Compose
+- 8GB RAM minimum (16GB recommandé pour performances optimales)
+- 4 CPU cores minimum (8 cores recommandé)
 
-### Automated Setup
+### Setup Automatique
 
 ```bash
-# Clone the project
+# Clone le projet
 git clone https://github.com/ahmed-bhs/symfony-postgres-ai-hybrid-search.git
 cd symfony-postgres-ai-hybrid-search
 
-# Run automated setup
+# Lance le setup automatisé
 ./docker-setup.sh
 ```
 
-The script will automatically:
-- Start PostgreSQL 16 + pgvector (port 5432)
-- Start Ollama optimized with 4 parallel workers (port 11434)
-- Download nomic-embed-text model (768 dimensions)
-- Verify everything is operational
+Le script va automatiquement:
+- Démarrer PostgreSQL 16 + pgvector (port 5432)
+- Démarrer Ollama optimisé avec 4 workers parallèles (port 11434)
+- Télécharger le modèle nomic-embed-text (768 dimensions)
+- Vérifier que tout est opérationnel
 
-### Manual Setup
+### Setup Manuel
 
-If you prefer manual setup:
+Si vous préférez faire le setup manuellement:
 
 ```bash
-# 1. Start services
+# 1. Démarrer les services
 docker compose up -d
 
-# 2. Wait for PostgreSQL to be ready
+# 2. Attendre que PostgreSQL soit prêt
 docker exec postgres_hybrid_search pg_isready -U postgres
 
-# 3. Wait for Ollama to be ready
+# 3. Attendre qu'Ollama soit prêt
 curl http://localhost:11434/api/tags
 
-# 4. Download embeddings model
+# 4. Télécharger le modèle d'embeddings
 docker exec ollama_embeddings ollama pull nomic-embed-text
 
-# 5. Verify model
+# 5. Vérifier le modèle
 docker exec ollama_embeddings ollama list
 ```
 
-### Import Movies
+### Importer les films
 
 ```bash
-# Quick test with 1000 movies (includes Shrek)
+# Test rapide avec 1000 films (contient Shrek)
 php bin/console app:import-movies --reset --limit=1000 --batch-size=50
 
-# Full import (31,944 movies - approximately 40 minutes with optimizations)
+# Import complet (31,944 films - environ 40 minutes avec optimisations)
 php bin/console app:import-movies --reset --batch-size=50
 ```
 
-The command will:
-- Create PostgreSQL table with pgvector + pg_trgm
-- Create indexes (vector + GIN for full-text + trigram for fuzzy)
-- Generate embeddings with Ollama (4 in parallel)
-- Insert movies into HybridStore
+La commande va:
+- Créer la table PostgreSQL avec pgvector + pg_trgm
+- Créer les indexes (vector + GIN pour full-text + trigram pour fuzzy)
+- Générer les embeddings avec Ollama (4 en parallèle)
+- Insérer les films dans le HybridStore
 
-### Use the Interface
+### Utiliser l'interface
 
-**Web Interface:**
+**Interface Web:**
 ```
 http://localhost:8000
 ```
 
-**REST API:**
+**API REST:**
 ```bash
-# Hybrid search
+# Recherche hybride
 curl "http://localhost:8000/api/search?q=space+adventure"
 
 # Health check
 curl "http://localhost:8000/api/health"
 ```
 
-## Search Examples
+## Exemples de Recherche
 
-### 1. Conceptual Search (Semantic Search)
+### 1. Recherche Conceptuelle (Semantic Search)
 
-The flagship example of semantic search - find Shrek without knowing the title:
+L'exemple phare de la recherche sémantique - chercher Shrek sans connaître le titre:
 
 ```bash
 curl "http://localhost:8000/api/search?q=green+ogre+living+in+swamp&limit=5" | jq -r '.results[] | "\(.title) - Score: \(.score)"'
 ```
 
-**Result:**
+**Résultat:**
 ```
 Shrek - Score: 42.00
 Monty Python and the Holy Grail - Score: 30.38
@@ -144,17 +142,17 @@ The Reaping - Score: 26.19
 Shrek the Third - Score: 17.48
 ```
 
-**The search understands the concept** ("green ogre in swamp") and finds Shrek first even though these exact words aren't in the description. This is the power of semantic search with vector embeddings!
+- **La recherche comprend le concept** ("green ogre in swamp") et trouve Shrek en premier même si ces mots exacts ne sont pas dans la description. C'est la puissance de la recherche sémantique avec embeddings vectoriels!
 
 ---
 
-### 2. Search by Genre/Theme
+### 2. Recherche par Genre/Thème
 
 ```bash
 curl "http://localhost:8000/api/search?q=fairy+tale&limit=5" | jq -r '.results[] | "\(.title) - Score: \(.score)"'
 ```
 
-**Result:**
+**Résultat:**
 ```
 Pan's Labyrinth - Score: 42.00
 Shrek 2 - Score: 38.50
@@ -163,20 +161,20 @@ Hook - Score: 28.78
 Shrek - Score: 26.86
 ```
 
-**Hybrid ranking works:**
-- Pan's Labyrinth has "fairy tale" 2x in keywords
-- Shrek 2 has the word "fairy" 3x (keywords + Fairy Godmother character)
-- Shrek only has "fairy tale" 1x in keywords
+**Le ranking hybride fonctionne:**
+- Pan's Labyrinth a "fairy tale" 2x dans les keywords
+- Shrek 2 a le mot "fairy" 3x (keywords + Fairy Godmother character)
+- Shrek n'a "fairy tale" qu'1x dans les keywords
 
 ---
 
-### 3. Search by Character/Actor
+### 3. Recherche par Personnage/Acteur
 
 ```bash
 curl "http://localhost:8000/api/search?q=Eddie+Murphy&limit=3" | jq -r '.results[] | "\(.title) - \(.overview[:80])..."'
 ```
 
-**Result:**
+**Résultat:**
 ```
 Beverly Hills Cop
 48 Hrs.
@@ -185,32 +183,32 @@ Dreamgirls
 Shrek
 ```
 
-**TMDb enriched search:** Characters/actors are indexed in content, allowing to find all Eddie Murphy's movies.
+- **Recherche enrichie TMDb:** Les personnages/acteurs (characters) sont indexés dans le contenu, permettant de trouver tous les films d'Eddie Murphy.
 
 ---
 
-### 4. Search with Typos (Fuzzy Matching)
+### 4. Recherche avec Fautes de Frappe (Fuzzy Matching)
 
 ```bash
 curl "http://localhost:8000/api/search?q=Batmn&limit=3" | jq -r '.results[0] | "\(.title)"'
 ```
 
-**Result:**
+**Résultat:**
 ```
 Batman
 ```
 
-**Fuzzy matching with pg_trgm:** Tolerates typos thanks to trigram similarity.
+- **Fuzzy matching avec pg_trgm:** Tolère les fautes de frappe grâce à la similarité trigram.
 
 ---
 
-### 5. Search by Abstract Concept
+### 5. Recherche par Concept Abstrait
 
 ```bash
 curl "http://localhost:8000/api/search?q=artificial+intelligence+robot+consciousness&limit=5" | jq -r '.results[] | "\(.title) - Score: \(.score)"'
 ```
 
-**Result:**
+**Résultat:**
 ```
 A.I. Artificial Intelligence - Score: 82.02
 The Matrix - Score: 30.15
@@ -219,29 +217,29 @@ Blade Runner - Score: 24.71
 Contact - Score: 23.86
 ```
 
-**Semantic understanding:** Finds movies about AI and consciousness even without these exact words in the title.
+**Compréhension sémantique:** Trouve les films sur l'IA et la conscience même sans ces mots exacts dans le titre.
 
 ---
 
-### 6. Multilingual Search (via Embeddings)
+### 6. Recherche Multilingue (via Embeddings)
 
 ```bash
 curl "http://localhost:8000/api/search?q=guerre+dans+l'espace&limit=3" | jq -r '.results[] | .title'
 ```
 
-**Note:** Results may vary depending on the dataset. Vector embeddings enable cross-language search thanks to semantic understanding.
+**Note:** Les résultats peuvent varier selon le dataset. Les embeddings vectoriels permettent une recherche cross-language grâce à la compréhension sémantique.
 
-**Cross-language search:** Embeddings capture semantics beyond language.
+**Cross-language search:** Les embeddings capturent la sémantique au-delà de la langue.
 
 ---
 
-### 7. Search by Director
+### 7. Recherche par Réalisateur
 
 ```bash
 curl "http://localhost:8000/api/search?q=Christopher+Nolan&limit=5" | jq -r '.results[] | "\(.title) - \(.release_date | strftime(\"%Y\"))"'
 ```
 
-**Result:**
+**Résultat:**
 ```
 Insomnia
 The Prestige
@@ -250,9 +248,9 @@ Batman Begins
 The Dark Knight
 ```
 
-**Director indexing:** The director is included in searchable content, allowing to find all Christopher Nolan's films.
+- **Director indexing:** Le réalisateur est inclus dans le contenu searchable, permettant de retrouver tous les films de Christopher Nolan.
 
-**JSON Response:**
+**Réponse JSON:**
 ```json
 {
   "query": "space adventure",
@@ -280,44 +278,44 @@ The Dark Knight
 }
 ```
 
-## How RRF Works
+##  Comment fonctionne le RRF ?
 
-**Reciprocal Rank Fusion (RRF)** is an algorithm that combines results from multiple search systems using their ranks:
+**Reciprocal Rank Fusion (RRF)** est un algorithme qui combine les résultats de plusieurs systèmes de recherche en utilisant leurs rangs:
 
 ```
 RRF_score(doc) = Σ 1 / (k + rank_i(doc))
 ```
 
-where:
-- `k` = 60 (RRF constant, configurable)
-- `rank_i(doc)` = document position in result i
+où:
+- `k` = 60 (constante RRF, configurable)
+- `rank_i(doc)` = position du document dans le résultat i
 
-### Process:
+### Processus:
 
-1. **Vector Search** (Semantic)
-   - Generates query embedding with Ollama
-   - Searches by cosine similarity in pgvector
-   - Results sorted by vector distance
+1. **Recherche Vectorielle** (Sémantique)
+   - Génère l'embedding de la requête avec Ollama
+   - Recherche par similarité cosinus dans pgvector
+   - Résultats triés par distance vectorielle
 
-2. **Full-text Search** (Keyword)
-   - Uses PostgreSQL `to_tsvector()` and `to_tsquery()`
-   - Calculates score with `ts_rank_cd()`
-   - Results sorted by text relevance
+2. **Recherche Plein-texte** (Keyword)
+   - Utilise PostgreSQL `to_tsvector()` et `to_tsquery()`
+   - Calcule le score avec `ts_rank_cd()`
+   - Résultats triés par pertinence textuelle
 
-3. **RRF Fusion**
-   - Combines both result lists
-   - Calculates RRF score for each document
-   - Returns results sorted by final RRF score
+3. **Fusion RRF**
+   - Combine les deux listes de résultats
+   - Calcule le score RRF pour chaque document
+   - Retourne les résultats triés par score RRF final
 
-### RRF Advantages:
-- No need to normalize scores
-- Robust to scale differences
-- Uses only ranks (positions)
-- Better results than weighted average
+### Avantages du RRF:
+- - Pas besoin de normaliser les scores
+- - Robuste aux différences d'échelle
+- - Utilise uniquement les rangs (positions)
+- - Meilleurs résultats que la moyenne pondérée
 
-## Configuration
+##  Configuration
 
-### `.env` File
+### Fichier `.env`
 ```env
 DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/hybrid_search?serverVersion=16&charset=utf8"
 OLLAMA_URL=http://localhost:11434
@@ -345,89 +343,89 @@ ai:
                 rrf_k: 60                 # RRF constant
                 # Fuzzy matching (pg_trgm)
                 fuzzy_enabled: true
-                fuzzy_threshold: 0.3     # Similarity threshold (0.0-1.0)
+                fuzzy_threshold: 0.3     # Seuil de similarité (0.0-1.0)
 
     vectorizer:
         ollama:
             model: '%env(OLLAMA_MODEL)%'
 ```
 
-### HybridStore Parameters
+### Paramètres du HybridStore
 
-**Hybrid Search:**
+**Recherche Hybride:**
 - **semantic_ratio** (0.0 - 1.0)
-  - `0.0` = 100% full-text search
-  - `0.5` = Balanced hybrid (default)
-  - `1.0` = 100% semantic search
+  - `0.0` = 100% recherche plein-texte
+  - `0.5` = Hybride équilibré (par défaut)
+  - `1.0` = 100% recherche sémantique
 
 - **language**
-  - `'simple'` = Multilingual, no stemming (recommended)
-  - `'english'`, `'french'`, etc. = Language-specific stemming
+  - `'simple'` = Multilingue, pas de stemming (recommandé)
+  - `'english'`, `'french'`, etc. = Stemming spécifique à la langue
 
-- **rrf_k** (int, default: 60)
-  - Higher = more equal weighting between results
+- **rrf_k** (int, défaut: 60)
+  - Plus élevé = pondération plus égale entre les résultats
 
 **Fuzzy Matching (pg_trgm):**
-- **fuzzy_enabled** (bool, default: true)
-  - Enable/disable fuzzy matching
+- **fuzzy_enabled** (bool, défaut: true)
+  - Active/désactive le matching flou
 
-- **fuzzy_threshold** (0.0 - 1.0, default: 0.3)
-  - Trigram similarity threshold
-  - Lower = more tolerant to errors
-  - `0.1` = Very tolerant
-  - `0.3` = Balanced (recommended)
+- **fuzzy_threshold** (0.0 - 1.0, défaut: 0.3)
+  - Seuil de similarité trigram
+  - Plus bas = plus tolérant aux fautes
+  - `0.1` = Très tolérant
+  - `0.3` = Équilibré (recommandé)
   - `0.5` = Strict
 
 ## Performance
 
-### Ollama Docker Optimizations
+### Optimisations Ollama Docker
 
-The Ollama service is configured for optimal performance:
+Le service Ollama est configuré pour des performances optimales:
 
-**Allocated Resources:**
-- CPU: 4-8 cores (reserved: 4, limit: 8)
-- RAM: 8-16GB (reserved: 8GB, limit: 16GB)
-- Parallelism: 4 simultaneous embeddings
-- Models in memory: 2
-- Max queue: 512 requests
+**Ressources allouées:**
+- CPU: 4-8 cores (réservé: 4, limite: 8)
+- RAM: 8-16GB (réservé: 8GB, limite: 16GB)
+- Parallélisme: 4 embeddings simultanés
+- Modèles en mémoire: 2
+- Queue max: 512 requêtes
 
-**Key Environment Variables:**
-- `OLLAMA_NUM_PARALLEL: 4` - Generate 4 embeddings in parallel (4x faster)
-- `OLLAMA_MAX_LOADED_MODELS: 2` - Keep models in RAM (no reload)
-- `OLLAMA_RUNNERS: 4` - 4 concurrent workers
-- `OLLAMA_MAX_QUEUE: 512` - Large queue
+**Variables d'environnement clés:**
+- `OLLAMA_NUM_PARALLEL: 4` - Génère 4 embeddings en parallèle (4x plus rapide)
+- `OLLAMA_MAX_LOADED_MODELS: 2` - Garde les modèles en RAM (pas de reload)
+- `OLLAMA_RUNNERS: 4` - 4 workers concurrents
+- `OLLAMA_MAX_QUEUE: 512` - File d'attente large
 
-### Import Benchmarks
+### Benchmarks Import
 
-| Configuration | 1000 movies | 31k movies | Improvement |
+| Configuration | 1000 films | 31k films | Amélioration |
 |---------------|-----------|-----------|--------------|
-| Local Ollama (1 core) | ~5min | ~2.5h | Baseline |
+| Ollama local (1 core) | ~5min | ~2.5h | Baseline |
 | **Docker (4 cores)** | **~1.5min** | **~40min** | **3.3x** |
 | Docker (8 cores) | ~1min | ~25min | 5x |
-| Docker + NVIDIA GPU | ~15s | ~8min | 20x |
+| Docker + GPU NVIDIA | ~15s | ~8min | 20x |
 
-### Search Benchmarks
+### Benchmarks Recherche
 
-- **Simple search:** 50-150ms
-- **Complex search:** 100-250ms
-- **Vector dimensions:** 768 (nomic-embed-text)
+- **Recherche simple:** 50-150ms
+- **Recherche complexe:** 100-250ms
+- **Dimension des vecteurs:** 768 (nomic-embed-text)
 
 ### Monitoring
 
 ```bash
-# Real-time stats
+# Stats en temps réel
 docker stats ollama_embeddings postgres_hybrid_search
 
-# Ollama logs
+# Logs Ollama
 docker logs -f ollama_embeddings
 
-# Active Ollama requests
+# Requêtes actives Ollama
 curl http://localhost:11434/api/ps
 ```
 
-### GPU Optimization (NVIDIA only)
+### Optimisation GPU (NVIDIA uniquement)
 
-To enable GPU support in docker-compose.yml, uncomment:
+Pour activer le support GPU dans docker-compose.yml, décommentez:
 
 ```yaml
 deploy:
@@ -439,141 +437,141 @@ deploy:
           capabilities: [gpu]
 ```
 
-Then restart:
+Puis redémarrez:
 ```bash
 docker compose down
 docker compose up -d
 ```
 
-**Note:** First verify you have an NVIDIA card:
+**Note:** Vérifiez d'abord que vous avez une carte NVIDIA:
 ```bash
 lspci | grep -i nvidia
 nvidia-smi
 ```
 
-## Useful Commands
+## Commandes Utiles
 
 ```bash
-# Import with options
+# Import avec options
 php bin/console app:import-movies --limit=1000 --batch-size=50
 php bin/console app:import-movies --reset --limit=5000
 
-# Service logs
+# Logs services
 docker logs -f ollama_embeddings
 docker logs -f postgres_hybrid_search
 
-# PostgreSQL access
+# Accès PostgreSQL
 docker exec -it postgres_hybrid_search psql -U postgres -d hybrid_search
 
-# Useful PostgreSQL queries
+# Requêtes PostgreSQL utiles
 docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "SELECT COUNT(*) FROM movies;"
 docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "\d movies"
 docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "SELECT title FROM movies LIMIT 5;"
 
-# Verify extensions
+# Vérifier les extensions
 docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "SELECT * FROM pg_extension;"
 ```
 
-## Project Structure
+## Structure du Projet
 
 ```
 src/
 ├── Command/
-│   └── ImportMoviesCommand.php      # Import movies into HybridStore
+│   └── ImportMoviesCommand.php      # Import des films dans HybridStore
 ├── Controller/
-│   └── SearchController.php         # API + Web interface
+│   └── SearchController.php         # API + Interface web
 ├── Service/
-│   └── MovieSearchService.php       # Service using HybridStore
+│   └── MovieSearchService.php       # Service utilisant HybridStore
 └── Entity/
-    └── Movie.php                    # Doctrine Entity (optional)
+    └── Movie.php                    # Entity Doctrine (optionnelle)
 
 config/packages/
-└── symfony_ai.yaml                  # Symfony AI configuration
+└── symfony_ai.yaml                  # Configuration Symfony AI
 
 templates/
-├── base.html.twig                   # Base template
+├── base.html.twig                   # Template de base
 └── search/
-    └── index.html.twig              # Search interface
+    └── index.html.twig              # Interface de recherche
 
-docker-compose.yml                   # Docker stack (PostgreSQL + Ollama)
-docker-setup.sh                      # Automated setup script
-PERFORMANCE.md                       # Detailed performance guide
+docker-compose.yml                   # Stack Docker (PostgreSQL + Ollama)
+docker-setup.sh                      # Script de setup automatisé
+PERFORMANCE.md                       # Guide détaillé des performances
 ```
 
-## Troubleshooting
+## Dépannage
 
-### Ollama not responding
+### Ollama ne répond pas
 
 ```bash
-# Check logs
+# Vérifier les logs
 docker logs ollama_embeddings
 
-# Restart service
+# Redémarrer le service
 docker compose restart ollama
 
-# Verify Ollama is listening
+# Vérifier qu'Ollama écoute bien
 curl http://localhost:11434/api/tags
 ```
 
-### Model not downloaded
+### Le modèle n'est pas téléchargé
 
 ```bash
-# Download manually
+# Télécharger manuellement
 docker exec ollama_embeddings ollama pull nomic-embed-text
 
-# Verify installed models
+# Vérifier les modèles installés
 docker exec ollama_embeddings ollama list
 ```
 
-### Very slow import
+### Import très lent
 
-Verify Docker optimizations are active:
+Vérifiez que les optimisations Docker sont actives:
 
 ```bash
-# Display Ollama config
+# Afficher la config Ollama
 docker exec ollama_embeddings env | grep OLLAMA
 
-# Should display:
+# Devrait afficher:
 # OLLAMA_NUM_PARALLEL=4
 # OLLAMA_RUNNERS=4
 ```
 
-If values are incorrect, restart:
+Si les valeurs ne sont pas bonnes, redémarrez:
 ```bash
 docker compose down
 docker compose up -d
 ```
 
-### PostgreSQL Error - Missing extensions
+### Erreur PostgreSQL - Extensions manquantes
 
 ```bash
-# Install required extensions
+# Installer les extensions nécessaires
 docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "
   CREATE EXTENSION IF NOT EXISTS vector;
   CREATE EXTENSION IF NOT EXISTS pg_trgm;
 "
 ```
 
-### Insufficient RAM
+### RAM insuffisante
 
-Reduce resources in docker-compose.yml:
+Réduire les ressources dans docker-compose.yml:
 
 ```yaml
-# For Ollama
-memory: 4G              # Instead of 8G
-OLLAMA_NUM_PARALLEL: 2  # Instead of 4
+# Pour Ollama
+memory: 4G              # Au lieu de 8G
+OLLAMA_NUM_PARALLEL: 2  # Au lieu de 4
 ```
 
-### Complete Reset
+### Reset complet
 
 ```bash
-# Remove all containers and volumes
+# Supprimer tous les containers et volumes
 docker compose down -v
 
-# Restart cleanly
+# Redémarrer proprement
 ./docker-setup.sh
 
-# Re-import movies
+# Réimporter les films
 php bin/console app:import-movies --reset --limit=1000
 ```
 
@@ -586,58 +584,58 @@ php bin/console app:import-movies --reset --limit=1000
 - [RRF Algorithm](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)
 - [Supabase Hybrid Search](https://supabase.com/docs/guides/ai/hybrid-search)
 
-## Use Cases
+## Cas d'Usage
 
-### Conceptual search
+### Recherche conceptuelle
 ```
 "movies about artificial intelligence and consciousness"
-→ Finds AI movies even without these exact words
+→ Trouve des films sur l'IA même sans ces mots exacts
 ```
 
-### Search by description
+### Recherche par description
 ```
 "green ogre living in a swamp"
-→ Finds Shrek thanks to semantic understanding
+→ Trouve Shrek grâce à la compréhension sémantique
 ```
 
-### Exact title search
+### Recherche de titre exact
 ```
 "The Matrix"
-→ Combines exact match + semantic similarity
+→ Combine exact match + similarité sémantique
 ```
 
-### Search with typos
+### Recherche avec fautes de frappe
 ```
-"Batmn" → Finds "Batman" thanks to fuzzy matching
-"Inceptoin" → Finds "Inception"
-```
-
-### Multilingual search
-```
-"aventure spatiale" (French)
-→ Finds "space adventure" thanks to embeddings
+"Batmn" → Trouve "Batman" grâce au fuzzy matching
+"Inceptoin" → Trouve "Inception"
 ```
 
-## Data
+### Recherche multilingue
+```
+"aventure spatiale" (français)
+→ Trouve "space adventure" grâce aux embeddings
+```
 
-**Dataset:** 31,944 TMDb movies
+## Données
+
+**Dataset:** 31,944 films TMDb
 **Source:** `~/meilisearch-datasets/movies.json`
 
-**Fields:**
-- `title` - Movie title
+**Champs:**
+- `title` - Titre du film
 - `overview` - Description
-- `genres` - Genre list
-- `poster` - TMDB poster URL
-- `release_date` - Release timestamp
+- `genres` - Liste des genres
+- `poster` - URL du poster TMDB
+- `release_date` - Timestamp de sortie
 
 ## License
 
 MIT
 
-## Credits
+## Crédits
 
 - **Symfony AI** - [symfony/ai](https://github.com/symfony/ai)
 - **Dataset** - TMDb (The Movie Database)
-- **Embeddings** - [Ollama](https://ollama.ai/) with nomic-embed-text
+- **Embeddings** - [Ollama](https://ollama.ai/) avec nomic-embed-text
 - **Vector Search** - [pgvector](https://github.com/pgvector/pgvector)
 - **Fuzzy Matching** - [pg_trgm](https://www.postgresql.org/docs/current/pgtrgm.html)
