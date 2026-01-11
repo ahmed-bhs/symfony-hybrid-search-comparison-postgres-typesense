@@ -1,6 +1,6 @@
 # Comparaison Recherche Hybride: Symfony AI vs Typesense
 
-> [🇬🇧 English version](README.md)
+> [🇬🇧 English version](README.md) | [📚 Documentation complète](https://ahmed-bhs.github.io/symfony-hybrid-search-comparison-postgres-typesense/)
 
 Comparaison de deux implémentations de recherche hybride sur une base de données de films (31 944 films):
 - **Symfony AI HybridStore**: PostgreSQL + pgvector + algorithme RRF
