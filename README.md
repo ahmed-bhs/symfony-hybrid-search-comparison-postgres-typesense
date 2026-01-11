@@ -20,9 +20,7 @@ Application de recherche hybride utilisant **Symfony AI HybridStore** avec l'alg
 │           Symfony 7.3 Application               │
 │                                                 │
 │  ┌──────────────────────────────────────────┐  │
-│  │   Symfony AI (Local Fork)                │  │
-│  │   /home/ahmed/Projets/ai                 │  │
-│  │   Branch: feature/postgres-hybrid-search │  │
+│  │         Symfony AI Bundle                │  │
 │  │                                          │  │
 │  │   ┌─────────────────────────────────┐   │  │
 │  │   │     HybridStore                 │   │  │
@@ -59,8 +57,9 @@ Application de recherche hybride utilisant **Symfony AI HybridStore** avec l'alg
 ### Setup Automatique
 
 ```bash
-# Clone ou navigue vers le projet
-cd ~/Projets/postgres
+# Clone le projet
+git clone https://github.com/ahmed-bhs/symfony-postgres-ai-hybrid-search.git
+cd symfony-postgres-ai-hybrid-search
 
 # Lance le setup automatisé
 ./docker-setup.sh
