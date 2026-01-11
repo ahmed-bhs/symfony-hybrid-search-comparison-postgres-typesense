@@ -1,0 +1,116 @@
+{
+    "type": "project",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/home/ahmed/Projets/ai/src/ai-bundle"
+        },
+        {
+            "type": "path",
+            "url": "/home/ahmed/Projets/ai/src/platform"
+        },
+        {
+            "type": "path",
+            "url": "/home/ahmed/Projets/ai/src/store"
+        },
+        {
+            "type": "path",
+            "url": "/home/ahmed/Projets/ai/src/chat"
+        },
+        {
+            "type": "path",
+            "url": "/home/ahmed/Projets/ai/src/agent"
+        },
+        {
+            "type": "path",
+            "url": "/home/ahmed/Projets/TypesenseBundle"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "acseo/typesense-bundle": "*",
+        "guzzlehttp/guzzle": "^7.10",
+        "symfony/ai-bundle": "dev-feature/postgres-hybrid-search",
+        "symfony/ai-platform": "dev-feature/postgres-hybrid-search as 0.2.999",
+        "symfony/ai-store": "dev-feature/postgres-hybrid-search as 0.2.999",
+        "symfony/asset-mapper": "^7.3",
+        "symfony/console": "^7.3.6",
+        "symfony/dotenv": "^7.3.2",
+        "symfony/flex": "^2.10",
+        "symfony/framework-bundle": "^7.3.6",
+        "symfony/http-client": "^7.3.6",
+        "symfony/property-access": "^7.3.3",
+        "symfony/runtime": "^7.3.4",
+        "symfony/serializer": "^7.3.5",
+        "symfony/stimulus-bundle": "*",
+        "symfony/twig-bundle": "^7.3",
+        "symfony/yaml": "^7.3.5"
+    },
+    "require-dev": {
+        "doctrine/doctrine-bundle": "^3.0",
+        "doctrine/doctrine-migrations-bundle": "^3.7",
+        "doctrine/orm": "^3.5.7",
+        "phpunit/phpunit": "^12.5",
+        "symfony/browser-kit": "^7.3",
+        "symfony/css-selector": "^7.3",
+        "symfony/maker-bundle": "^1.64",
+        "symfony/stopwatch": "^7.3",
+        "symfony/web-profiler-bundle": "^7.3"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "bump-after-update": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true,
+            "require": "^7.3"
+        }
+    }
+}

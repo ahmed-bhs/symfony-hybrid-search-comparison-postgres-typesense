@@ -1,0 +1,42 @@
+ai:
+    platform:
+        ollama:
+            host_url: 'http://127.0.0.1:11434'
+
+    store:
+        postgres:
+            hybrid:
+                dsn: 'pgsql:host=localhost;dbname=hybrid_search'
+                username: 'postgres'
+                password: 'postgres'
+                table_name: 'movies'
+                vector_field: 'embedding'
+                distance: cosine             # Cosine distance for normalized embeddings
+
+                # Enable hybrid search mode
+                hybrid:
+                    enabled: true
+                    content_field: 'content'
+                    semantic_ratio: 0.3          # 30% semantic, 70% BM25 for better semantic understanding
+                    language: 'english'          # Stemming + stop words for better matching
+                    bm25_language: 'en'          # BM25 language code for stemming (en, fr, es, de, etc.)
+                    text_search_strategy: 'bm25' # Use BM25 instead of PostgreSQL FTS
+                    rrf_k: 10                    # RRF parameter: REDUCED to amplify good BM25 ranks (TMDb keywords/characters)
+                    default_min_score: 0         # Low threshold to catch semantic queries
+                    normalize_scores: true       # Normalize scores to 0-100 (better UX)
+
+                    # Fuzzy matching configuration (pg_trgm for typo tolerance)
+                    fuzzy_primary_threshold: 0.25    # Primary threshold for high-quality matches
+                    fuzzy_secondary_threshold: 0.2   # Secondary threshold for catching more typos
+                    fuzzy_strict_threshold: 0.15     # Strict similarity threshold
+                    fuzzy_weight: 0.4                # Fuzzy matching weight
+
+                    # Field-specific boosting (similar to Meilisearch)
+                    # Favor full descriptions (overview) for better semantic context
+                    # Note: When searchable_attributes is empty, the entire 'content' field is searched
+                    # When defined, ONLY these fields are searched by BM25
+                    searchable_attributes: []  # Search in full content (title, overview, genres, keywords, characters, director)
+
+    vectorizer:
+        ollama:
+            model: 'nomic-embed-text'

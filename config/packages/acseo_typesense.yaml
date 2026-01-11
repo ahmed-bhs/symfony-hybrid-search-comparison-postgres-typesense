@@ -1,0 +1,64 @@
+# Read the documentation: https://github.com/acseo/TypesenseBundle/blob/master/README.md
+acseo_typesense:
+    typesense:
+        url: '%typesense_url%'
+        key: '%typesense_key%'
+    # Collection settings
+    collections:
+        movies:
+            entity: 'App\Entity\Movie'
+            fields:
+                -
+                    entity_attribute: id
+                    name: id
+                    type: string
+                -
+                    entity_attribute: tmdb_id
+                    name: sortable_id
+                    type: int32
+                -
+                    entity_attribute: tmdb_id
+                    name: tmdb_id
+                    type: int32
+                    optional: true
+                -
+                    entity_attribute: title
+                    name: title
+                    type: string
+                    infix: true
+                -
+                    entity_attribute: overview
+                    name: overview
+                    type: string
+                    optional: true
+                    infix: true
+                -
+                    entity_attribute: genres
+                    name: genres
+                    type: 'string[]'
+                    facet: true
+                    optional: true
+                -
+                    entity_attribute: poster
+                    name: poster
+                    type: string
+                    optional: true
+                -
+                    entity_attribute: release_date
+                    name: release_date
+                    type: int32
+                    facet: true
+                    optional: true
+                -
+                    name: embedding
+                    type: 'float[]'
+                    optional: true
+                    embed:
+                        from:
+                            - title
+                            - overview
+                        model_config:
+                            model_name: 'openai/nomic-embed-text'
+                            api_key: 'dummy'
+                            url: 'http://ollama_embeddings:11434'
+            default_sorting_field: sortable_id

@@ -1,0 +1,7 @@
+ai:
+    store:
+        postgres:
+            hybrid:
+                dsn: 'pgsql:host=localhost;dbname=hybrid_search_test'
+                username: 'postgres'
+                password: 'postgres'

@@ -1,0 +1,50 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    tmdb.api_key: '%env(TMDB_API_KEY)%'
+    tmdb.enabled: '%env(bool:TMDB_ENABLED)%'
+    typesense_url: '%env(TYPESENSE_URL)%'
+    typesense_key: '%env(TYPESENSE_KEY)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    # TMDb Enricher Service
+    App\Service\TmdbEnricher:
+        arguments:
+            $apiKey: '%tmdb.api_key%'
+            $enabled: '%tmdb.enabled%'
+
+    # PDO Connection from Doctrine DBAL
+    app.pdo:
+        class: PDO
+        factory: ['@doctrine.dbal.default_connection', 'getNativeConnection']
+        public: true
+
+    # Alias Symfony AI services for autowiring
+    Symfony\AI\Store\Document\Vectorizer: '@ai.vectorizer.ollama'
+    # Use HybridStore configured in symfony_ai.yaml (with BM25 + DISTINCT fix + configurable bm25_language)
+    Symfony\AI\Store\StoreInterface:
+        alias: ai.store.postgres.hybrid
+        public: true
+
+    # Alias Typesense services for autowiring
+    ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'

@@ -1,0 +1,89 @@
+services:
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: postgres_hybrid_search
+    environment:
+      POSTGRES_DB: hybrid_search
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hybrid_search_network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_embeddings
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      # Performance optimizations
+      OLLAMA_NUM_PARALLEL: 4              # Process 4 embeddings in parallel
+      OLLAMA_MAX_LOADED_MODELS: 2         # Keep 2 models in memory
+      OLLAMA_ORIGINS: "*"                 # Allow CORS from anywhere
+      OLLAMA_HOST: "0.0.0.0:11434"        # Listen on all interfaces
+      # Memory and compute settings
+      OLLAMA_MAX_QUEUE: 512               # Max queued requests
+      OLLAMA_RUNNERS: 4                   # Number of concurrent runners
+    deploy:
+      resources:
+        limits:
+          cpus: '8'                       # Use up to 8 CPU cores
+          memory: 16G                     # 16GB RAM for models + embeddings
+        reservations:
+          cpus: '4'                       # Reserve at least 4 cores
+          memory: 8G                      # Reserve 8GB RAM
+          # Uncomment for GPU support (NVIDIA)
+          # devices:
+          #   - driver: nvidia
+          #     count: 1
+          #     capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - hybrid_search_network
+
+  typesense:
+    image: typesense/typesense:27.1
+    container_name: typesense_search
+    ports:
+      - "8108:8108"
+    volumes:
+      - typesense_data:/data
+    environment:
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_API_KEY: 123
+      TYPESENSE_ENABLE_CORS: true
+    command: '--data-dir /data --api-key=123 --enable-cors'
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hybrid_search_network
+
+networks:
+  hybrid_search_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  ollama_data:
+  typesense_data:
