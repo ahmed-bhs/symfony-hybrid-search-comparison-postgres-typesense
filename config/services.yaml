@@ -43,7 +43,7 @@ services:
     Symfony\AI\Store\Document\Vectorizer: '@ai.vectorizer.ollama'
     # Use HybridStore configured in symfony_ai.yaml (with BM25 + DISTINCT fix + configurable bm25_language)
     Symfony\AI\Store\StoreInterface:
-        alias: ai.store.postgres.hybrid
+        alias: ai.store.postgres.movies
         public: true
 
     # Alias Typesense services for autowiring

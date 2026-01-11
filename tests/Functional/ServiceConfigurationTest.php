@@ -37,7 +37,7 @@ class ServiceConfigurationTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $store = self::getContainer()->get('ai.store.postgres.hybrid');
+        $store = self::getContainer()->get('ai.store.postgres.movies');
 
         self::assertInstanceOf(StoreInterface::class, $store);
     }
@@ -91,7 +91,7 @@ class ServiceConfigurationTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $store = self::getContainer()->get('ai.store.postgres.hybrid');
+        $store = self::getContainer()->get('ai.store.postgres.movies');
 
         self::assertInstanceOf(StoreInterface::class, $store);
         self::assertInstanceOf(ManagedStoreInterface::class, $store);

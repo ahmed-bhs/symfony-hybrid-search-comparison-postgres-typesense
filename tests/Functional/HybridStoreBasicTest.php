@@ -17,7 +17,7 @@ class HybridStoreBasicTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $store = self::getContainer()->get('ai.store.postgres.hybrid');
+        $store = self::getContainer()->get('ai.store.postgres.movies');
 
         self::assertInstanceOf(StoreInterface::class, $store);
         self::assertInstanceOf(ManagedStoreInterface::class, $store);
@@ -37,7 +37,7 @@ class HybridStoreBasicTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $store = self::getContainer()->get('ai.store.postgres.hybrid');
+        $store = self::getContainer()->get('ai.store.postgres.movies');
 
         // Lazy services are wrapped in proxy objects
         $reflection = new \ReflectionClass($store);

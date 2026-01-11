@@ -5,7 +5,7 @@ ai:
 
     store:
         postgres:
-            hybrid:
+            movies:
                 dsn: 'pgsql:host=localhost;dbname=hybrid_search'
                 username: 'postgres'
                 password: 'postgres'

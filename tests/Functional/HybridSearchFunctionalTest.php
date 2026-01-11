@@ -23,7 +23,7 @@ class HybridSearchFunctionalTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->store = self::getContainer()->get('ai.store.postgres.hybrid');
+        $this->store = self::getContainer()->get('ai.store.postgres.movies');
 
         $dbalConnection = self::getContainer()->get('doctrine.dbal.default_connection');
         $this->pdo = $dbalConnection->getNativeConnection();
