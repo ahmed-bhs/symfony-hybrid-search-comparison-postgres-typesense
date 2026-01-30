@@ -5,17 +5,17 @@ Demo showcasing **Symfony AI HybridStore** for PostgreSQL - combining semantic s
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────┐
-│         Symfony AI HybridStore              │
-│                                             │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐     │
-│  │pgvector │  │BM25/FTS │  │ pg_trgm │     │
-│  │(vector) │  │ (text)  │  │ (fuzzy) │     │
-│  └────┬────┘  └────┬────┘  └────┬────┘     │
-│       └────────────┼────────────┘          │
-│                    ▼                        │
-│           RRF (Rank Fusion)                │
-└─────────────────────────────────────────────┘
+┌───────────────────────────────────────────┐
+│       Symfony AI HybridStore              │
+│                                           │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐     │
+│  │pgvector │ │BM25/FTS │ │ pg_trgm │     │
+│  │(vector) │ │ (text)  │ │ (fuzzy) │     │
+│  └────┬────┘ └────┬────┘ └────┬────┘     │
+│       └───────────┼───────────┘          │
+│                   ▼                       │
+│         RRF (Rank Fusion)                │
+└───────────────────────────────────────────┘
 ```
 
 ## Quick Start
