@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25c881acad5a7819399e4daba62b5be5",
+    "content-hash": "639363b96719bb1ba377f713b7be35db",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -2582,11 +2582,11 @@
             "dist": {
                 "type": "path",
                 "url": "/home/ahmed/Projets/ai/src/ai-bundle",
-                "reference": "ea4116a2b02ad7d8974f94fb94fd60f9f9f779a8"
+                "reference": "5e19f03c5b9d935cdd2864eb81a8ecdc818bad1e"
             },
             "require": {
                 "php": ">=8.2",
-                "symfony/ai-platform": "^0.2",
+                "symfony/ai-platform": "^0.3",
                 "symfony/clock": "^7.3|^8.0",
                 "symfony/config": "^7.3|^8.0",
                 "symfony/console": "^7.3|^8.0",
@@ -2600,75 +2600,73 @@
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^11.5.46",
-                "symfony/ai-agent": "^0.2",
-                "symfony/ai-ai-ml-api-platform": "^0.2",
-                "symfony/ai-albert-platform": "^0.2",
-                "symfony/ai-anthropic-platform": "^0.2",
-                "symfony/ai-azure-platform": "^0.2",
-                "symfony/ai-azure-search-store": "^0.2",
-                "symfony/ai-bedrock-platform": "^0.2",
-                "symfony/ai-cache-message-store": "^0.2",
-                "symfony/ai-cache-store": "^0.2",
-                "symfony/ai-cartesia-platform": "^0.2",
-                "symfony/ai-cerebras-platform": "^0.2",
-                "symfony/ai-chat": "^0.2",
-                "symfony/ai-chroma-db-store": "^0.2",
-                "symfony/ai-click-house-store": "^0.2",
-                "symfony/ai-cloudflare-message-store": "^0.2",
-                "symfony/ai-cloudflare-store": "^0.2",
-                "symfony/ai-decart-platform": "^0.2",
-                "symfony/ai-deep-seek-platform": "^0.2",
-                "symfony/ai-docker-model-runner-platform": "^0.2",
-                "symfony/ai-doctrine-message-store": "^0.2",
-                "symfony/ai-elasticsearch-store": "^0.2",
-                "symfony/ai-eleven-labs-platform": "^0.2",
-                "symfony/ai-failover-platform": "^0.2",
-                "symfony/ai-gemini-platform": "^0.2",
-                "symfony/ai-generic-platform": "^0.2",
-                "symfony/ai-hugging-face-platform": "^0.2",
-                "symfony/ai-lm-studio-platform": "^0.2",
-                "symfony/ai-manticore-search-store": "^0.2",
-                "symfony/ai-maria-db-store": "^0.2",
-                "symfony/ai-meilisearch-message-store": "^0.2",
-                "symfony/ai-meilisearch-store": "^0.2",
-                "symfony/ai-meta-platform": "^0.2",
-                "symfony/ai-milvus-store": "^0.2",
-                "symfony/ai-mistral-platform": "^0.2",
-                "symfony/ai-mongo-db-message-store": "^0.2",
-                "symfony/ai-mongo-db-store": "^0.2",
-                "symfony/ai-neo4j-store": "^0.2",
-                "symfony/ai-ollama-platform": "^0.2",
-                "symfony/ai-open-ai-platform": "^0.2",
-                "symfony/ai-open-router-platform": "^0.2",
-                "symfony/ai-open-search-store": "^0.2",
-                "symfony/ai-perplexity-platform": "^0.2",
-                "symfony/ai-pinecone-store": "^0.2",
-                "symfony/ai-pogocache-message-store": "^0.2",
-                "symfony/ai-postgres-store": "^0.2",
-                "symfony/ai-qdrant-store": "^0.2",
-                "symfony/ai-redis-message-store": "^0.2",
-                "symfony/ai-redis-store": "^0.2",
-                "symfony/ai-replicate-platform": "^0.2",
-                "symfony/ai-scaleway-platform": "^0.2",
-                "symfony/ai-session-message-store": "^0.2",
-                "symfony/ai-store": "^0.2",
-                "symfony/ai-supabase-store": "^0.2",
-                "symfony/ai-surreal-db-message-store": "^0.2",
-                "symfony/ai-surreal-db-store": "^0.2",
-                "symfony/ai-transformers-php-platform": "^0.2",
-                "symfony/ai-typesense-store": "^0.2",
-                "symfony/ai-vertex-ai-platform": "^0.2",
-                "symfony/ai-voyage-platform": "^0.2",
-                "symfony/ai-weaviate-store": "^0.2",
+                "symfony/ai-agent": "^0.3",
+                "symfony/ai-ai-ml-api-platform": "^0.3",
+                "symfony/ai-albert-platform": "^0.3",
+                "symfony/ai-anthropic-platform": "^0.3",
+                "symfony/ai-azure-platform": "^0.3",
+                "symfony/ai-azure-search-store": "^0.3",
+                "symfony/ai-bedrock-platform": "^0.3",
+                "symfony/ai-cache-message-store": "^0.3",
+                "symfony/ai-cache-platform": "^0.3",
+                "symfony/ai-cache-store": "^0.3",
+                "symfony/ai-cartesia-platform": "^0.3",
+                "symfony/ai-cerebras-platform": "^0.3",
+                "symfony/ai-chat": "^0.3",
+                "symfony/ai-chroma-db-store": "^0.3",
+                "symfony/ai-click-house-store": "^0.3",
+                "symfony/ai-cloudflare-message-store": "^0.3",
+                "symfony/ai-cloudflare-store": "^0.3",
+                "symfony/ai-decart-platform": "^0.3",
+                "symfony/ai-deep-seek-platform": "^0.3",
+                "symfony/ai-docker-model-runner-platform": "^0.3",
+                "symfony/ai-doctrine-message-store": "^0.3",
+                "symfony/ai-elasticsearch-store": "^0.3",
+                "symfony/ai-eleven-labs-platform": "^0.3",
+                "symfony/ai-failover-platform": "^0.3",
+                "symfony/ai-gemini-platform": "^0.3",
+                "symfony/ai-generic-platform": "^0.3",
+                "symfony/ai-hugging-face-platform": "^0.3",
+                "symfony/ai-lm-studio-platform": "^0.3",
+                "symfony/ai-manticore-search-store": "^0.3",
+                "symfony/ai-maria-db-store": "^0.3",
+                "symfony/ai-meilisearch-message-store": "^0.3",
+                "symfony/ai-meilisearch-store": "^0.3",
+                "symfony/ai-meta-platform": "^0.3",
+                "symfony/ai-milvus-store": "^0.3",
+                "symfony/ai-mistral-platform": "^0.3",
+                "symfony/ai-mongo-db-message-store": "^0.3",
+                "symfony/ai-mongo-db-store": "^0.3",
+                "symfony/ai-neo4j-store": "^0.3",
+                "symfony/ai-ollama-platform": "^0.3",
+                "symfony/ai-open-ai-platform": "^0.3",
+                "symfony/ai-open-router-platform": "^0.3",
+                "symfony/ai-open-search-store": "^0.3",
+                "symfony/ai-perplexity-platform": "^0.3",
+                "symfony/ai-pinecone-store": "^0.3",
+                "symfony/ai-pogocache-message-store": "^0.3",
+                "symfony/ai-postgres-store": "^0.3",
+                "symfony/ai-qdrant-store": "^0.3",
+                "symfony/ai-redis-message-store": "^0.3",
+                "symfony/ai-redis-store": "^0.3",
+                "symfony/ai-replicate-platform": "^0.3",
+                "symfony/ai-scaleway-platform": "^0.3",
+                "symfony/ai-session-message-store": "^0.3",
+                "symfony/ai-store": "^0.3",
+                "symfony/ai-supabase-store": "^0.3",
+                "symfony/ai-surreal-db-message-store": "^0.3",
+                "symfony/ai-surreal-db-store": "^0.3",
+                "symfony/ai-transformers-php-platform": "^0.3",
+                "symfony/ai-typesense-store": "^0.3",
+                "symfony/ai-vertex-ai-platform": "^0.3",
+                "symfony/ai-voyage-platform": "^0.3",
+                "symfony/ai-weaviate-store": "^0.3",
                 "symfony/expression-language": "^7.3|^8.0",
                 "symfony/security-core": "^7.3|^8.0",
                 "symfony/translation": "^7.3|^8.0"
             },
             "type": "symfony-bundle",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "0.3.x-dev"
-                },
                 "thanks": {
                     "name": "symfony/ai",
                     "url": "https://github.com/symfony/ai"
@@ -2713,7 +2711,7 @@
             "dist": {
                 "type": "path",
                 "url": "/home/ahmed/Projets/ai/src/platform",
-                "reference": "9af266b85cd1c03f83ec2b03a63ce356a4f23dfe"
+                "reference": "0bf4fec02d3c0ae81731ff284881a21cf254d5ce"
             },
             "require": {
                 "ext-fileinfo": "*",
@@ -2747,9 +2745,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "0.3.x-dev"
-                },
                 "thanks": {
                     "name": "symfony/ai",
                     "url": "https://github.com/symfony/ai"
@@ -2824,13 +2819,13 @@
             "dist": {
                 "type": "path",
                 "url": "/home/ahmed/Projets/ai/src/store",
-                "reference": "1183a2d4d8930ff07c677681b1e0a01948a07510"
+                "reference": "38cb7a57c398221a43f31b2f2a40ae1465bfe1a5"
             },
             "require": {
                 "ext-fileinfo": "*",
                 "php": ">=8.2",
                 "psr/log": "^3.0",
-                "symfony/ai-platform": "^0.2",
+                "symfony/ai-platform": "^0.3",
                 "symfony/clock": "^7.3|^8.0",
                 "symfony/http-client": "^7.3|^8.0",
                 "symfony/polyfill-php83": "^1.32",
@@ -2847,9 +2842,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "0.3.x-dev"
-                },
                 "thanks": {
                     "name": "symfony/ai",
                     "url": "https://github.com/symfony/ai"
@@ -9643,14 +9635,14 @@
         {
             "package": "symfony/ai-platform",
             "version": "dev-feature/postgres-hybrid-search",
-            "alias": "0.2.999",
-            "alias_normalized": "0.2.999.0"
+            "alias": "0.3.999",
+            "alias_normalized": "0.3.999.0"
         },
         {
             "package": "symfony/ai-store",
             "version": "dev-feature/postgres-hybrid-search",
-            "alias": "0.2.999",
-            "alias_normalized": "0.2.999.0"
+            "alias": "0.3.999",
+            "alias_normalized": "0.3.999.0"
         }
     ],
     "minimum-stability": "dev",
