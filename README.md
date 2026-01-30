@@ -1,448 +1,325 @@
-# Hybrid Search Comparison: Symfony AI vs Typesense
+# Symfony AI HybridStore Demo
 
-> [🇫🇷 Version française](README.fr.md) | [📚 Full Documentation](https://ahmed-bhs.github.io/symfony-hybrid-search-comparison-postgres-typesense/)
+Demo application showcasing **Symfony AI HybridStore** for PostgreSQL - combining semantic search, full-text search, and fuzzy matching using the RRF (Reciprocal Rank Fusion) algorithm.
 
-Compare two hybrid search implementations for a movie database (31,944 movies):
-- **Symfony AI HybridStore**: PostgreSQL + pgvector + RRF algorithm
-- **Typesense**: Search engine with built-in vector search
+## Features
 
-Both solutions combine semantic search (embeddings), full-text search (keywords), and fuzzy matching (typos).
-
-## Why This Comparison?
-
-This project demonstrates real-world hybrid search implementations with the same dataset, allowing you to:
-- **Compare performance** between PostgreSQL+pgvector and Typesense
-- **Understand trade-offs** (flexibility vs. ease of use, cost vs. performance)
-- **Choose the right solution** for your use case
-- **Learn hybrid search concepts** with working examples
-
-## Quick Comparison
-
-| Feature | Symfony AI HybridStore | Typesense |
-|---------|------------------------|-----------|
-| **Backend** | PostgreSQL + pgvector | Dedicated search engine |
-| **Algorithm** | Custom RRF (Reciprocal Rank Fusion) | Built-in hybrid search |
-| **Setup** | More complex (multiple extensions) | Simpler (single service) |
-| **Flexibility** | Full SQL access, custom algorithms | API-based, predefined features |
-| **Cost** | Free (open source PostgreSQL) | Free (self-hosted) or Cloud |
-| **Best for** | Complex queries, existing PostgreSQL | Fast setup, managed solution |
+- **Semantic Search** via pgvector (cosine similarity)
+- **Full-text Search** via BM25 or native PostgreSQL FTS
+- **Fuzzy Matching** via pg_trgm (typo tolerance)
+- **RRF Algorithm** for optimal result ranking
+- **31,944 movies** dataset from TMDb
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                 Symfony 7.3 Application                     │
-│                                                             │
-│  ┌────────────────────────┐  ┌──────────────────────────┐  │
-│  │  Symfony AI HybridStore│  │      Typesense           │  │
-│  │                        │  │                          │  │
-│  │  ┌──────────────────┐ │  │  ┌────────────────────┐  │  │
-│  │  │ Vector (pgvector)│ │  │  │  Vector Search     │  │  │
-│  │  │ FTS (ts_rank)    │ │  │  │  Full-text Search  │  │  │
-│  │  │ Fuzzy (pg_trgm)  │ │  │  │  Fuzzy Matching    │  │  │
-│  │  │ RRF Algorithm    │ │  │  │  Built-in Hybrid   │  │  │
-│  │  └────────┬─────────┘ │  │  └─────────┬──────────┘  │  │
-│  └───────────┼───────────┘  └────────────┼─────────────┘  │
-│              │                            │                 │
-│  ┌───────────▼────────────────────────────▼──────────────┐ │
-│  │              Ollama (nomic-embed-text)                │ │
-│  │              Shared embeddings (768 dimensions)       │ │
-│  └───────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│              Symfony 7.3 Application                │
+│                                                     │
+│  ┌───────────────────────────────────────────────┐ │
+│  │          Symfony AI HybridStore               │ │
+│  │                                               │ │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────┐ │ │
+│  │  │   pgvector  │ │  BM25/FTS   │ │ pg_trgm │ │ │
+│  │  │  (semantic) │ │  (keywords) │ │ (fuzzy) │ │ │
+│  │  └──────┬──────┘ └──────┬──────┘ └────┬────┘ │ │
+│  │         └───────────────┼─────────────┘      │ │
+│  │                         ▼                    │ │
+│  │              RRF (Rank Fusion)               │ │
+│  └───────────────────────────────────────────────┘ │
+│                         │                           │
+│  ┌──────────────────────▼──────────────────────┐   │
+│  │         Ollama (nomic-embed-text)           │   │
+│  │         768-dimensional embeddings          │   │
+│  └─────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────┘
 
-Data:  PostgreSQL (movies table)          Typesense (movies collection)
-       31,944 movies with embeddings      31,944 movies with embeddings
+Database: PostgreSQL + pgvector (movies table with 31,944 entries)
 ```
-
-## Features
-
-### Symfony AI HybridStore
-- Custom RRF implementation (configurable weights)
-- Direct PostgreSQL access for complex queries
-- Full control over ranking algorithm
-- Configurable semantic_ratio (0.0 to 1.0)
-- Advanced filtering with SQL
-- Integrated with Doctrine ORM
-
-### Typesense
-- Built-in hybrid search (auto-tuned)
-- RESTful API (language-agnostic)
-- Auto-generated embeddings
-- Built-in typo tolerance
-- Faceted search support
-- Easier to scale horizontally
 
 ## Quick Start
 
 ### Prerequisites
+
 - Docker and Docker Compose
-- 8GB RAM minimum (16GB recommended)
-- 4 CPU cores minimum
+- PHP 8.2+
+- Composer
+- Symfony CLI (optional)
 
-### 1. Clone and Setup
+### 1. Start Services
 
 ```bash
-git clone https://github.com/ahmed-bhs/symfony-hybrid-search-comparison-postgres-typesense.git
-cd symfony-hybrid-search-comparison-postgres-typesense
+# Clone the repository
+git clone https://github.com/ahmed-bhs/symfony-ai-hybrid-search-demo.git
+cd symfony-ai-hybrid-search-demo
 
-# Start all services (PostgreSQL, Typesense, Ollama)
-./docker-setup.sh
+# Start PostgreSQL and Ollama
+docker compose up -d
+
+# Wait for services to be ready
+docker compose ps
 ```
 
-The script will:
-- Start PostgreSQL 16 + pgvector (port 5432)
-- Start Typesense 27.1 (port 8108)
-- Start Ollama with nomic-embed-text (port 11434)
-- Verify all services are ready
+### 2. Install Dependencies
 
-### 2. Import Movies
-
-**For Symfony AI (PostgreSQL):**
 ```bash
+composer install
+```
+
+### 3. Setup Store and Import Data
+
+```bash
+# Setup the store (creates table + installs pgvector, pg_trgm, BM25 functions)
+php bin/console ai:store:setup ai.store.postgres.movies
+
+# Import movies (BM25 index is created automatically on first import)
 # Quick test (1000 movies)
-php bin/console app:import-movies --reset --limit=1000 --batch-size=50
+php bin/console app:import-movies --limit=1000 --batch-size=50
 
-# Full dataset (31,944 movies - ~40 minutes)
-php bin/console app:import-movies --reset --batch-size=50
+# Full dataset (~40 minutes)
+php bin/console app:import-movies --batch-size=50
 ```
 
-**For Typesense:**
-```bash
-# Import and auto-generate embeddings
-php bin/console app:typesense-index --reset
-
-# Typesense will generate embeddings via Ollama automatically
-```
-
-### 3. Start Symfony Server
+### 4. Start the Server
 
 ```bash
 symfony server:start
+# or
+php -S localhost:8000 -t public/
 ```
 
-### 4. Access Interfaces
-
-- **Symfony AI Interface**: http://localhost:8000
-- **Typesense Interface**: http://localhost:8000/typesense
-- **API Endpoints**:
-  - Symfony AI: `GET /api/search?q=query`
-  - Typesense: `GET /api/typesense/search?q=query`
-
-## Search Examples
-
-### Semantic Search (Concept Understanding)
-
-Find Shrek without knowing the title:
+### 5. Test the Search
 
 ```bash
-# Symfony AI
-curl "http://localhost:8000/api/search?q=green+ogre+living+in+swamp&limit=5"
+# BM25 search (recommended)
+curl "http://localhost:8000/api/search/bm25?q=green+ogre&limit=5"
 
-# Typesense
-curl "http://localhost:8000/api/typesense/search?q=green+ogre+living+in+swamp&limit=5"
+# Native PostgreSQL FTS
+curl "http://localhost:8000/api/search/native?q=green+ogre&limit=5"
+
+# Compare both strategies
+curl "http://localhost:8000/api/compare?q=green+ogre&limit=5"
 ```
 
-**Both return:** Shrek as the top result, demonstrating semantic understanding.
+## Text Search Strategies
 
-### Keyword Search
+### BM25 (Recommended)
+
+Uses `plpgsql_bm25` for industry-standard relevance ranking.
 
 ```bash
-# Symfony AI
-curl "http://localhost:8000/api/search?q=fairy+tale&limit=5"
-
-# Typesense
-curl "http://localhost:8000/api/typesense/search?q=fairy+tale&limit=5"
+curl "http://localhost:8000/api/search/bm25?q=green+ogre&limit=5"
 ```
-
-**Results:**
-- Pan's Labyrinth (has "fairy tale" 2x in keywords)
-- Shrek 2 (has "fairy" 3x including "Fairy Godmother")
-- Edward Scissorhands, Hook, Shrek...
-
-### Fuzzy Matching (Typo Tolerance)
-
-```bash
-# Symfony AI
-curl "http://localhost:8000/api/search?q=Batmn&limit=3"
-
-# Typesense
-curl "http://localhost:8000/api/typesense/search?q=Batmn&limit=3"
-```
-
-**Both find:** "Batman" despite the typo.
-
-### Actor/Character Search
-
-```bash
-# Search for Eddie Murphy movies
-curl "http://localhost:8000/api/search?q=Eddie+Murphy&limit=5"
-```
-
-**Results:** Beverly Hills Cop, 48 Hrs., Trading Places, Dreamgirls, Shrek
-
-## Configuration
-
-### Symfony AI (config/packages/symfony_ai.yaml)
-
-```yaml
-ai:
-    store:
-        postgres:
-            hybrid:
-                dsn: 'pgsql:host=postgres;dbname=hybrid_search'
-                semantic_ratio: 0.3        # 30% semantic, 70% full-text
-                text_search_strategy: 'bm25'
-                rrf_k: 10
-                normalize_scores: true
-                fuzzy_enabled: true
-                fuzzy_threshold: 0.3
-```
-
-**Key Parameters:**
-- `semantic_ratio`: Balance between vector (0.0) and text (1.0)
-- `text_search_strategy`: 'bm25' or 'ts_rank'
-- `rrf_k`: RRF constant for rank fusion
-- `fuzzy_threshold`: Trigram similarity (0.0-1.0)
-
-### Typesense (config/packages/acseo_typesense.yaml)
-
-```yaml
-acseo_typesense:
-    typesense:
-        url: '%env(TYPESENSE_URL)%'
-        key: '%env(TYPESENSE_KEY)%'
-    collections:
-        movies:
-            fields:
-                - name: embedding
-                  type: 'float[]'
-                  embed:
-                      from: [title, overview]
-                      model_config:
-                          model_name: 'openai/nomic-embed-text'
-                          url: 'http://ollama_embeddings:11434'
-```
-
-**Key Features:**
-- Auto-embedding from Ollama
-- Infix search enabled for partial matches
-- Faceted search on genres and release_date
-
-## Performance Comparison
-
-### Import Speed (31,944 movies)
-
-| Solution | Time | Speed |
-|----------|------|-------|
-| **Symfony AI** | ~40 min | ~13 movies/sec |
-| **Typesense** | ~45 min | ~12 movies/sec |
-
-*Both use Ollama with 4 parallel workers*
-
-### Search Speed (Average)
-
-| Query Type | Symfony AI | Typesense |
-|------------|-----------|-----------|
-| Simple keyword | 50-100ms | 30-80ms |
-| Semantic (vector) | 80-150ms | 50-120ms |
-| Hybrid (RRF) | 100-200ms | 60-150ms |
-
-*Results may vary based on hardware and dataset size*
-
-### Resource Usage
-
-| Resource | Symfony AI | Typesense |
-|----------|-----------|-----------|
-| RAM (idle) | ~200MB (PostgreSQL) | ~500MB (Typesense) |
-| RAM (indexed) | ~1.5GB | ~2GB |
-| Disk space | ~8GB | ~6GB |
-
-## Pros and Cons
-
-### Symfony AI HybridStore
 
 **Pros:**
-- Full control over ranking algorithm
-- No vendor lock-in (standard PostgreSQL)
-- Complex SQL queries possible
-- Integrated with existing PostgreSQL
-- Configurable RRF weights
-- No additional infrastructure cost
+- More accurate relevance ranking
+- Better understanding of term frequency and document length
+- Same algorithm as Elasticsearch, Lucene, Meilisearch
 
-**Cons:**
-- More complex setup (extensions, indexes)
-- Manual tuning required
-- Slower initial setup
-- Limited horizontal scaling
+### Native PostgreSQL FTS
 
-### Typesense
+Uses PostgreSQL's built-in `ts_rank_cd` function.
+
+```bash
+curl "http://localhost:8000/api/search/native?q=green+ogre&limit=5"
+```
 
 **Pros:**
-- Easier setup and configuration
-- Built-in features (facets, geo-search)
-- RESTful API (any language)
-- Better horizontal scaling
-- Auto-tuned hybrid search
-- Great documentation
+- No additional functions needed
+- Works with any PostgreSQL installation
 
-**Cons:**
-- Additional service to manage
-- Less control over algorithms
-- Paid cloud option for scaling
-- Not standard SQL
-- Requires separate infrastructure
+### Comparison: "green ogre" Query
 
-## Use Cases
+| Rank | BM25 | Native FTS |
+|------|------|------------|
+| 1 | **Shrek** (42.0) | The Green Mile (16.8) |
+| 2 | Gremlins 2 (33.9) | Fried Green Tomatoes (15.4) |
+| 3 | Fried Green Tomatoes (25.8) | Greed (9.5) |
 
-### Choose Symfony AI HybridStore if:
-- You already use PostgreSQL
-- You need complex SQL queries
-- You want full control over ranking
-- You're building a custom solution
-- Budget is tight (no additional services)
-- You have PostgreSQL expertise
+BM25 correctly identifies Shrek because it understands that "green ogre" matches the overview: *"It ain't easy bein' green -- especially if you're a likable (albeit smelly) ogre named Shrek."*
 
-### Choose Typesense if:
-- You want quick setup
-- You need a managed solution
-- You prefer API-based approach
-- You need horizontal scaling
-- You want built-in features (facets, etc.)
-- You have microservices architecture
+## API Endpoints
 
-## API Comparison
-
-### Search Request
-
-**Symfony AI:**
-```bash
-GET /api/search?q=matrix&limit=10
-```
-
-**Typesense:**
-```bash
-GET /api/typesense/search?q=matrix&limit=10
-```
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/search/bm25?q=query` | Search using BM25 (recommended) |
+| `GET /api/search/native?q=query` | Search using native PostgreSQL FTS |
+| `GET /api/compare?q=query` | Compare BM25 vs Native FTS side-by-side |
+| `GET /api/search?q=query` | Default search (uses BM25) |
 
 ### Response Format
 
-Both return:
 ```json
 {
   "query": "matrix",
+  "strategy": "BM25 (plpgsql_bm25 extension)",
   "hits": 10,
   "processingTimeMs": 120,
   "results": [
     {
-      "id": 603,
       "title": "The Matrix",
-      "overview": "...",
-      "score": 85.5
+      "overview": "A computer hacker learns about the true nature of reality...",
+      "genres": ["Action", "Science Fiction"],
+      "score": 85.5,
+      "score_breakdown": {
+        "vector_rank": 1,
+        "fts_rank": 1,
+        "vector_contribution": 45.2,
+        "fts_contribution": 30.1,
+        "fuzzy_contribution": 10.2
+      }
     }
   ]
 }
 ```
 
+## Configuration
+
+### config/packages/symfony_ai.yaml
+
+```yaml
+ai:
+    platform:
+        ollama:
+            host_url: 'http://127.0.0.1:11434'
+
+    store:
+        postgres:
+            movies:
+                dsn: 'pgsql:host=localhost;dbname=hybrid_search'
+                username: 'postgres'
+                password: 'postgres'
+                table_name: 'movies'
+                vector_field: 'embedding'
+                distance: cosine
+
+                hybrid:
+                    enabled: true
+                    content_field: 'content'
+                    semantic_ratio: 0.3          # 30% semantic, 70% text search
+                    language: 'english'
+                    bm25_language: 'en'
+                    text_search_strategy: 'bm25' # or 'native'
+                    rrf_k: 10
+                    normalize_scores: true
+                    fuzzy_weight: 0.4
+
+    vectorizer:
+        ollama:
+            model: 'nomic-embed-text'
+```
+
+### Key Parameters
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `semantic_ratio` | Balance between vector (1.0) and text (0.0) | 0.3 |
+| `text_search_strategy` | `bm25` or `native` | `bm25` |
+| `rrf_k` | RRF constant for rank fusion | 60 |
+| `fuzzy_weight` | Weight of fuzzy matching (0.0-1.0) | 0.5 |
+| `normalize_scores` | Normalize scores to 0-100 | true |
+
+## How It Works
+
+### 1. Setup Phase (`ai:store:setup`)
+
+- Creates the `movies` table with vector column
+- Installs `pgvector` and `pg_trgm` extensions
+- Installs BM25 functions (`bm25topk`, `bm25createindex`, etc.)
+
+### 2. Import Phase (`app:import-movies`)
+
+- Generates embeddings via Ollama (nomic-embed-text)
+- Inserts documents into the table
+- **Automatically creates BM25 index** on first batch (lazy indexing)
+
+### 3. Search Phase
+
+1. Query text is vectorized via Ollama
+2. Three parallel searches are executed:
+   - **Vector search** (pgvector cosine similarity)
+   - **Text search** (BM25 or ts_rank_cd)
+   - **Fuzzy search** (pg_trgm word similarity)
+3. Results are merged using **RRF (Reciprocal Rank Fusion)**
+4. Final scores are normalized to 0-100 range
+
 ## Commands
 
 ```bash
-# Symfony AI (PostgreSQL)
-php bin/console app:import-movies --reset --limit=1000
-php bin/console app:import-movies --reset  # Full import
+# Setup store
+php bin/console ai:store:setup ai.store.postgres.movies
 
-# Typesense
-php bin/console app:typesense-index --reset
+# Import movies
+php bin/console app:import-movies --limit=1000 --batch-size=50
 
 # Database access
 docker exec -it postgres_hybrid_search psql -U postgres -d hybrid_search
 
-# Typesense API
-curl "http://localhost:8108/collections/movies/documents/search?q=matrix&query_by=title,overview"
+# Check BM25 index
+docker exec postgres_hybrid_search psql -U postgres -d hybrid_search \
+  -c "SELECT * FROM movies_content_bm25i_params LIMIT 3;"
 
 # Service logs
 docker logs -f postgres_hybrid_search
-docker logs -f typesense_search
 docker logs -f ollama_embeddings
 ```
 
 ## Troubleshooting
 
-### PostgreSQL Issues
+### PostgreSQL Connection Issues
+
 ```bash
-# Check if pgvector is installed
-docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "SELECT * FROM pg_extension WHERE extname = 'vector';"
+# Check if container is running
+docker compose ps
 
-# Recreate extensions
-docker exec postgres_hybrid_search psql -U postgres -d hybrid_search -c "
-  CREATE EXTENSION IF NOT EXISTS vector;
-  CREATE EXTENSION IF NOT EXISTS pg_trgm;
-"
-```
-
-### Typesense Issues
-```bash
-# Check health
-curl http://localhost:8108/health
-
-# View collections
-curl -H "X-TYPESENSE-API-KEY: 123" http://localhost:8108/collections
-
-# Delete collection
-curl -X DELETE -H "X-TYPESENSE-API-KEY: 123" http://localhost:8108/collections/movies
+# Check logs
+docker logs postgres_hybrid_search
 ```
 
 ### Ollama Issues
+
 ```bash
-# Check model
+# Check if model is loaded
 docker exec ollama_embeddings ollama list
 
 # Re-download model
 docker exec ollama_embeddings ollama pull nomic-embed-text
+```
 
-# Test embedding
-curl http://localhost:11434/api/embeddings -d '{
-  "model": "nomic-embed-text",
-  "prompt": "test"
-}'
+### BM25 Not Working
+
+```bash
+# Check if BM25 functions exist
+docker exec postgres_hybrid_search psql -U postgres -d hybrid_search \
+  -c "SELECT proname FROM pg_proc WHERE proname = 'bm25topk';"
+
+# Check if BM25 index exists
+docker exec postgres_hybrid_search psql -U postgres -d hybrid_search \
+  -c "SELECT * FROM movies_content_bm25i_params LIMIT 1;"
 ```
 
 ## Documentation
 
-### Symfony AI
-- [Symfony AI Documentation](https://github.com/symfony/ai)
+- [Symfony AI](https://github.com/symfony/ai)
 - [pgvector](https://github.com/pgvector/pgvector)
+- [plpgsql_bm25](https://github.com/jankovicsandras/plpgsql_bm25)
 - [RRF Algorithm Paper](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)
-
-### Typesense
-- [Typesense Documentation](https://typesense.org/docs/)
-- [Vector Search Guide](https://typesense.org/docs/guide/vector-search.html)
-- [Hybrid Search](https://typesense.org/docs/guide/semantic-search.html)
-
-### General
 - [Ollama](https://ollama.ai/)
-- [nomic-embed-text](https://huggingface.co/nomic-ai/nomic-embed-text-v1)
 
 ## Dataset
 
 **Source:** 31,944 movies from TMDb
+
 **Fields:**
 - title, overview, genres
 - release_date, poster
 - TMDb metadata (keywords, cast, director)
 
 **Enrichments:**
-- Vector embeddings (768 dimensions)
-- Full-text indexes
+- Vector embeddings (768 dimensions via nomic-embed-text)
+- BM25 full-text index
 - Trigram indexes for fuzzy search
 
 ## License
 
 MIT
-
-## Credits
-
-- **Symfony AI** - [symfony/ai](https://github.com/symfony/ai)
-- **Typesense** - [typesense.org](https://typesense.org/)
-- **Dataset** - TMDb (The Movie Database)
-- **Embeddings** - [Ollama](https://ollama.ai/) with nomic-embed-text
-- **PostgreSQL Extensions** - [pgvector](https://github.com/pgvector/pgvector), pg_trgm
