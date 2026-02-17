@@ -1,0 +1,43 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF3F8"/>
+      <stop offset="1" stop-color="#DCE6F2"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F4F7FB"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#bg)"/>
+
+  <rect x="80" y="48" width="1120" height="624" rx="20" fill="url(#card)" stroke="#C9D7E6"/>
+  <text x="120" y="110" fill="#1F2A37" font-family="Arial, sans-serif" font-size="34" font-weight="700">Hybrid Movie Search</text>
+  <text x="120" y="144" fill="#4B5563" font-family="Arial, sans-serif" font-size="18">Symfony AI • PostgreSQL + pgvector • BM25 + RRF</text>
+
+  <rect x="120" y="180" width="860" height="58" rx="12" fill="#FFFFFF" stroke="#B9CADB"/>
+  <text x="144" y="216" fill="#9AA6B2" font-family="Arial, sans-serif" font-size="20">Search for movies... (space adventure, romantic comedy)</text>
+  <rect x="1000" y="180" width="160" height="58" rx="12" fill="#5B6E82"/>
+  <text x="1045" y="216" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="22" font-weight="600">Search</text>
+
+  <rect x="120" y="270" width="1040" height="54" rx="12" fill="#FFFFFF" stroke="#D2DEE9"/>
+  <text x="144" y="304" fill="#374151" font-family="Arial, sans-serif" font-size="18" font-weight="600">Found 20 movies for "space adventure"</text>
+  <text x="1020" y="304" fill="#6B7280" font-family="Arial, sans-serif" font-size="18">154ms</text>
+
+  <rect x="120" y="350" width="220" height="290" rx="12" fill="#FFFFFF" stroke="#D2DEE9"/>
+  <rect x="144" y="372" width="172" height="200" rx="8" fill="#E5ECF3"/>
+  <text x="144" y="598" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Interstellar</text>
+
+  <rect x="370" y="350" width="220" height="290" rx="12" fill="#FFFFFF" stroke="#D2DEE9"/>
+  <rect x="394" y="372" width="172" height="200" rx="8" fill="#E5ECF3"/>
+  <text x="394" y="598" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">The Martian</text>
+
+  <rect x="620" y="350" width="220" height="290" rx="12" fill="#FFFFFF" stroke="#D2DEE9"/>
+  <rect x="644" y="372" width="172" height="200" rx="8" fill="#E5ECF3"/>
+  <text x="644" y="598" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Dune</text>
+
+  <rect x="870" y="350" width="220" height="290" rx="12" fill="#FFFFFF" stroke="#D2DEE9"/>
+  <rect x="894" y="372" width="172" height="200" rx="8" fill="#E5ECF3"/>
+  <text x="894" y="598" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Arrival</text>
+</svg>

@@ -1197,14 +1197,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *                 default_max_score?: float|Param, // Default maximum distance threshold for filtering results (optional) // Default: null
  *                 default_min_score?: float|Param, // Default minimum RRF score threshold for filtering results (optional) // Default: null
  *                 normalize_scores?: bool|Param, // Normalize scores to 0-100 range for better readability // Default: true
- *                 fuzzy_primary_threshold?: float|Param, // Primary threshold for fuzzy matching (pg_trgm word_similarity). Default: 0.25 // Default: 0.25
- *                 fuzzy_secondary_threshold?: float|Param, // Secondary threshold for fuzzy matching with double validation. Default: 0.2 // Default: 0.2
- *                 fuzzy_strict_threshold?: float|Param, // Strict similarity threshold for double validation. Default: 0.15 // Default: 0.15
- *                 fuzzy_weight?: float|Param, // Weight of fuzzy matching vs FTS in hybrid search. 0.0 = disabled, 0.5 = equal, 1.0 = fuzzy only // Default: 0.5
- *                 searchable_attributes?: array<string, array{ // Default: []
- *                     boost?: float|Param, // Boost multiplier for this field (e.g., 2.0 = twice as important). Default: 1.0 // Default: 1.0
- *                     metadata_key: scalar|null|Param, // JSON path to extract value from metadata (e.g., "title", "description")
- *                 }>,
+ *                 fuzzy_threshold?: float|Param, // Minimum word_similarity threshold for fuzzy matching (pg_trgm). Default: 0.2 // Default: 0.2
+ *                 fuzzy_weight?: float|Param, // Weight of fuzzy matching in hybrid search. 0.0 = disabled (default), 1.0 = fuzzy only // Default: 0.0
  *             },
  *         }>,
  *         qdrant?: array<string, array{ // Default: []

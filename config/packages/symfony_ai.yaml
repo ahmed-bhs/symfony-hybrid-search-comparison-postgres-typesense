@@ -23,11 +23,8 @@ ai:
                     rrf_k: 10
                     default_min_score: 0
                     normalize_scores: true
-                    fuzzy_primary_threshold: 0.25
-                    fuzzy_secondary_threshold: 0.2
-                    fuzzy_strict_threshold: 0.15
-                    fuzzy_weight: 0.4
-                    searchable_attributes: []
+                    fuzzy_threshold: 0.2
+                    fuzzy_weight: 0.0
 
     vectorizer:
         ollama:

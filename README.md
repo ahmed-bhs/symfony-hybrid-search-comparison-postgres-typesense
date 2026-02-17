@@ -1,57 +1,78 @@
-# Symfony AI HybridStore Demo
+# Symfony AI Hybrid Search Demo (PostgreSQL)
 
-Demo showcasing **Symfony AI HybridStore** for PostgreSQL - combining semantic search, full-text search (BM25/native), and fuzzy matching via RRF.
+Démo d’un moteur de recherche hybride de films avec **Symfony AI Store** et PostgreSQL:
+- recherche sémantique (`pgvector`)
+- recherche textuelle (`BM25` / FTS)
+- fusion des résultats via RRF
 
-## Architecture
+## Prérequis
 
-```
-┌───────────────────────────────────────────┐
-│       Symfony AI HybridStore              │
-│                                           │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐     │
-│  │pgvector │ │BM25/FTS │ │ pg_trgm │     │
-│  │(vector) │ │ (text)  │ │ (fuzzy) │     │
-│  └────┬────┘ └────┬────┘ └────┬────┘     │
-│       └───────────┼───────────┘          │
-│                   ▼                       │
-│         RRF (Rank Fusion)                │
-└───────────────────────────────────────────┘
-```
+- PHP `>= 8.2`
+- Composer
+- Docker + Docker Compose
+- Symfony CLI (optionnel, mais recommandé)
+- Au moins 8 Go de RAM disponibles (Ollama + PostgreSQL)
 
-## Quick Start
+## Installation
+
+1. Cloner le projet puis entrer dans le dossier.
+2. Lancer les services Docker:
 
 ```bash
-# Start services
 docker compose up -d
+```
 
-# Install dependencies
+3. Installer les dépendances PHP:
+
+```bash
 composer install
+```
 
-# Setup store & import data
+4. Télécharger le modèle d'embedding Ollama:
+
+```bash
+docker exec -it ollama_embeddings ollama pull nomic-embed-text
+```
+
+5. Initialiser le store PostgreSQL:
+
+```bash
 php bin/console ai:store:setup ai.store.postgres.movies
-php bin/console app:import-movies --limit=1000 --batch-size=50
+```
 
-# Start server
+6. Importer les films:
+
+```bash
+php bin/console app:import-movies --limit=1000 --batch-size=50
+```
+
+7. Lancer l'application:
+
+```bash
 symfony server:start
 ```
 
-## Test
+L’interface est ensuite disponible sur `http://127.0.0.1:8000`.
+
+## Capture de l'application
+
+![Capture de l'application](docs/images/app-screenshot.svg)
+
+## Endpoints API
+
+- `GET /api/search?q=...&ratio=0.30`
+- `GET /api/search/bm25?q=...&limit=5`
+- `GET /api/search/native?q=...&limit=5`
+- `GET /api/compare?q=...`
+
+## Test rapide
 
 ```bash
-curl "http://localhost:8000/api/search/bm25?q=green+ogre&limit=5"
-curl "http://localhost:8000/api/search/native?q=green+ogre&limit=5"
+curl "http://127.0.0.1:8000/api/search/bm25?q=green+ogre&limit=5"
+curl "http://127.0.0.1:8000/api/search/native?q=green+ogre&limit=5"
 ```
 
-## API Endpoints
+## Notes
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/search/bm25?q=query` | BM25 search (recommended) |
-| `GET /api/search/native?q=query` | Native PostgreSQL FTS |
-| `GET /api/compare?q=query` | Compare both strategies |
-
-## Links
-
-- [Symfony AI](https://github.com/symfony/ai)
-- [pgvector](https://github.com/pgvector/pgvector)
-- [plpgsql_bm25](https://github.com/jankovicsandras/plpgsql_bm25)
+- Le projet est configuré avec des dépendances locales Symfony AI (repositories `type: path` dans `composer.json`).
+- Si vous n'avez pas ces sources locales, adaptez `composer.json` avant `composer install`.

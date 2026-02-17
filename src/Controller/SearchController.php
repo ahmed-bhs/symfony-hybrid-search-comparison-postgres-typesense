@@ -65,10 +65,16 @@ class SearchController extends AbstractController
                     'score_breakdown' => $doc->getMetadata()['_score_breakdown'] ?? null,
                 ], $results),
             ]);
-        } catch (\Exception $e) {
-            return $this->json([
-                'error' => 'Search failed: '.$e->getMessage(),
-            ], 500);
+        } catch (\Throwable $e) {
+            $message = $e->getMessage();
+            $status = 500;
+
+            if ($e instanceof \PDOException || str_contains($message, 'Connection refused')) {
+                $message = 'Database connection failed. Is PostgreSQL running?';
+                $status = 503;
+            }
+
+            return new JsonResponse(json_encode(['error' => $message]), $status, [], true);
         }
     }
 }
