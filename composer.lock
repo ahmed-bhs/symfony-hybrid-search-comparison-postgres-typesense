@@ -2582,7 +2582,7 @@
             "dist": {
                 "type": "path",
                 "url": "/home/ahmed/Projets/ai/src/ai-bundle",
-                "reference": "5e19f03c5b9d935cdd2864eb81a8ecdc818bad1e"
+                "reference": "9f8b68d5e6233852512ea6c8d38ddbc1e099e6cc"
             },
             "require": {
                 "php": ">=8.2",
@@ -2640,6 +2640,7 @@
                 "symfony/ai-neo4j-store": "^0.3",
                 "symfony/ai-ollama-platform": "^0.3",
                 "symfony/ai-open-ai-platform": "^0.3",
+                "symfony/ai-open-responses-platform": "^0.4",
                 "symfony/ai-open-router-platform": "^0.3",
                 "symfony/ai-open-search-store": "^0.3",
                 "symfony/ai-perplexity-platform": "^0.3",
@@ -2711,7 +2712,7 @@
             "dist": {
                 "type": "path",
                 "url": "/home/ahmed/Projets/ai/src/platform",
-                "reference": "0bf4fec02d3c0ae81731ff284881a21cf254d5ce"
+                "reference": "cc07b6e57f6aa634db6a8e077b8a21379166caea"
             },
             "require": {
                 "ext-fileinfo": "*",
@@ -2803,6 +2804,7 @@
                 "ollama",
                 "openai",
                 "openrouter",
+                "ovh",
                 "perplexity",
                 "replicate",
                 "transformers",
@@ -2819,7 +2821,7 @@
             "dist": {
                 "type": "path",
                 "url": "/home/ahmed/Projets/ai/src/store",
-                "reference": "38cb7a57c398221a43f31b2f2a40ae1465bfe1a5"
+                "reference": "0f4ecf1d3af05ff826d4f5f2f69e33f231917202"
             },
             "require": {
                 "ext-fileinfo": "*",
@@ -2836,9 +2838,12 @@
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^11.5.46",
-                "symfony/console": "^6.4|^7.1",
-                "symfony/dependency-injection": "^6.4|^7.1",
-                "symfony/dom-crawler": "^6.4|^7.1"
+                "symfony/console": "^7.3|^8.0",
+                "symfony/dependency-injection": "^7.3|^8.0",
+                "symfony/dom-crawler": "^7.3|^8.0",
+                "symfony/filesystem": "^7.3|^8.0",
+                "symfony/json-path": "^7.3|^8.0",
+                "symfony/string": "^7.3|^8.0"
             },
             "type": "library",
             "extra": {
