@@ -14,9 +14,7 @@ class MovieSearchService
 {
     public function __construct(
         #[Autowire(service: 'ai.store.postgres.movies')]
-        private StoreInterface $bm25Store,
-        #[Autowire(service: 'ai.store.postgres.movies_native')]
-        private StoreInterface $nativeStore,
+        private StoreInterface $store,
         private Vectorizer $vectorizer,
         private LoggerInterface $logger,
         private TmdbEnricher $tmdbEnricher,
@@ -55,8 +53,7 @@ class MovieSearchService
                 metadata: $metadata
             );
 
-            $this->bm25Store->add($document);
-            $this->nativeStore->add($document);
+            $this->store->add($document);
         } catch (\Exception $e) {
             $this->logger->error('Failed to add movie to store', [
                 'movie_id' => $id,
@@ -112,13 +109,11 @@ class MovieSearchService
 
     public function setup(int $vectorSize = 768): void
     {
-        $this->bm25Store->setup(['vector_size' => $vectorSize]);
-        $this->nativeStore->setup(['vector_size' => $vectorSize]);
+        $this->store->setup(['vector_size' => $vectorSize]);
     }
 
     public function drop(): void
     {
-        $this->bm25Store->drop();
-        $this->nativeStore->drop();
+        $this->store->drop();
     }
 }

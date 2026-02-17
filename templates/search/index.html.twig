@@ -79,6 +79,57 @@
     box-shadow: 0 4px 12px rgba(90,108,125,0.4);
 }
 
+.ratio-control {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ratio-control label {
+    font-size: 0.9rem;
+    color: #5a6c7d;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ratio-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e67e22, #3498db);
+    outline: none;
+}
+
+.ratio-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #5a6c7d;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.ratio-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 4px;
+    padding: 0 2px;
+}
+
+.ratio-value {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 600;
+    min-width: 36px;
+    text-align: center;
+}
+
 .loading {
     text-align: center;
     padding: 40px;
@@ -132,10 +183,6 @@
     object-fit: cover;
     background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
     transition: opacity 0.3s ease-in-out;
-}
-
-.movie-poster[loading="lazy"]:not([src]) {
-    opacity: 0.5;
 }
 
 .movie-info {
@@ -199,25 +246,34 @@
 {% block body %}
 <div class="container">
     <div class="header">
-        <h1>🎬 Hybrid Movie Search</h1>
+        <h1>Hybrid Movie Search</h1>
         <p>
-            Powered by 
+            Powered by
             <span class="badge">Symfony AI</span>
             <span class="badge">PostgreSQL + pgvector</span>
-            <span class="badge">RRF Algorithm</span>
+            <span class="badge">BM25 + RRF</span>
         </p>
     </div>
 
     <div class="search-box">
         <div class="search-input-wrapper">
-            <input 
-                type="text" 
-                class="search-input" 
-                id="searchInput" 
+            <input
+                type="text"
+                class="search-input"
+                id="searchInput"
                 placeholder="Search for movies... (e.g., space adventure, romantic comedy, time travel)"
                 autocomplete="off"
             >
             <button class="search-button" id="searchButton">Search</button>
+        </div>
+        <div class="ratio-control">
+            <label for="ratioSlider">Semantic ratio</label>
+            <input type="range" class="ratio-slider" id="ratioSlider" min="0" max="100" value="30" step="5">
+            <span class="ratio-value" id="ratioValue">0.30</span>
+        </div>
+        <div class="ratio-labels">
+            <span>Full-text (BM25)</span>
+            <span>Semantic (vector)</span>
         </div>
     </div>
 
@@ -227,16 +283,23 @@
 <script>
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchButton');
+const ratioSlider = document.getElementById('ratioSlider');
+const ratioValue = document.getElementById('ratioValue');
 const resultsDiv = document.getElementById('results');
+
+ratioSlider.addEventListener('input', () => {
+    ratioValue.textContent = (ratioSlider.value / 100).toFixed(2);
+});
 
 async function search() {
     const query = searchInput.value.trim();
     if (!query) return;
 
-    resultsDiv.innerHTML = '<div class="loading">🔍 Searching...</div>';
+    const ratio = (ratioSlider.value / 100).toFixed(2);
+    resultsDiv.innerHTML = '<div class="loading">Searching...</div>';
 
     try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&ratio=${ratio}`);
         const data = await response.json();
 
         if (data.error) {
@@ -257,7 +320,7 @@ async function search() {
         let html = `
             <div class="results-info">
                 <div class="results-count">
-                    Found ${data.hits} movies for "${data.query}"
+                    Found ${data.hits} movies for "${data.query}" (ratio: ${data.semanticRatio})
                 </div>
                 <div class="processing-time">
                     ${data.processingTimeMs}ms
@@ -267,10 +330,10 @@ async function search() {
         `;
 
         data.results.forEach(movie => {
-            const genres = Array.isArray(movie.genres) 
+            const genres = Array.isArray(movie.genres)
                 ? movie.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')
                 : '';
-            
+
             html += `
                 <div class="movie-card">
                     <img
@@ -302,7 +365,6 @@ searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') search();
 });
 
-// Auto-search on page load if there's a query parameter
 const urlParams = new URLSearchParams(window.location.search);
 const initialQuery = urlParams.get('q');
 if (initialQuery) {

@@ -5,7 +5,6 @@ ai:
 
     store:
         postgres:
-            # Store with BM25 text search (requires plpgsql_bm25 extension)
             movies:
                 dsn: 'pgsql:host=localhost;dbname=hybrid_search'
                 username: 'postgres'
@@ -21,30 +20,6 @@ ai:
                     language: 'english'
                     bm25_language: 'en'
                     text_search_strategy: 'bm25'
-                    rrf_k: 10
-                    default_min_score: 0
-                    normalize_scores: true
-                    fuzzy_primary_threshold: 0.25
-                    fuzzy_secondary_threshold: 0.2
-                    fuzzy_strict_threshold: 0.15
-                    fuzzy_weight: 0.4
-                    searchable_attributes: []
-
-            # Store with native PostgreSQL FTS (no extension required)
-            movies_native:
-                dsn: 'pgsql:host=localhost;dbname=hybrid_search'
-                username: 'postgres'
-                password: 'postgres'
-                table_name: 'movies_native'
-                vector_field: 'embedding'
-                distance: cosine
-
-                hybrid:
-                    enabled: true
-                    content_field: 'content'
-                    semantic_ratio: 0.3
-                    language: 'english'
-                    text_search_strategy: 'native'  # Uses PostgreSQL ts_rank_cd (no extension needed)
                     rrf_k: 10
                     default_min_score: 0
                     normalize_scores: true
